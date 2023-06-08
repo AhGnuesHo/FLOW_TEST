@@ -5,11 +5,13 @@ import {
   extensionModel,
   ExtensionModelType,
 } from "../model";
-import { IExtension } from "../model/schema";
+import { IDefaultExtension, IExtension } from "../model/schema";
 export interface IExtensionService {
-  getDefaultExtension(): Promise<IExtension[]>;
+  getDefaultExtension(): Promise<IDefaultExtension[]>;
+  setDefaultExtension(id: ObjectId, current: boolean): Promise<IExtension>;
   setCustomExtension(extension: string): Promise<IExtension>;
   getCustomExtension(): Promise<IExtension[]>;
+  delExtension(id: ObjectId, name: string): Promise<boolean>;
 }
 
 export class ExtensionService implements IExtensionService {
@@ -18,7 +20,7 @@ export class ExtensionService implements IExtensionService {
     private defaultModel: DefaultModelType
   ) {}
 
-  public async getDefaultExtension(): Promise<IExtension[]> {
+  public async getDefaultExtension(): Promise<IDefaultExtension[]> {
     return await this.defaultModel.find({});
   }
 
@@ -33,16 +35,25 @@ export class ExtensionService implements IExtensionService {
     return result;
   }
   public async setCustomExtension(extension: string): Promise<IExtension> {
-    const [{ id, name, available }] = await this.extensionModel.create([
+    const [{ id, name }] = await this.extensionModel.create([
       {
         name: extension,
       },
     ]);
-    return { id, name, available };
+    return { id, name };
   }
 
   public async getCustomExtension(): Promise<IExtension[]> {
     return await this.extensionModel.find({});
+  }
+
+  public async delExtension(id: ObjectId, name: string): Promise<boolean> {
+    const { deletedCount } = await this.extensionModel.deleteOne({
+      _id: id,
+      name,
+    });
+
+    return deletedCount === 1;
   }
 }
 

@@ -1,14 +1,13 @@
-import mongoose, { ObjectId } from "mongoose";
+import mongoose from "mongoose";
+import { IExtension } from "./extensionSchema";
 
 const Schema = mongoose.Schema;
 
-export interface IExtension {
-  id: ObjectId;
-  name: string;
+export interface IDefaultExtension extends IExtension {
   available: boolean;
 }
 
-export const DefaultSchema = new Schema<IExtension>(
+export const DefaultSchema = new Schema<IDefaultExtension>(
   {
     name: {
       type: String,

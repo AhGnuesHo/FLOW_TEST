@@ -14,9 +14,14 @@ extensionRouter.post(
   DtoValidatorMiddleware(ExtensionDto),
   asyncHandler(extensionController.setDefaultExtension)
 );
-extensionRouter.post(
-  "/",
+extensionRouter.get("/", asyncHandler(extensionController.getCustomExtension));
+extensionRouter.patch(
+  "/add",
   DtoValidatorMiddleware(ExtensionDto),
   asyncHandler(extensionController.setExtension)
 );
-extensionRouter.get("/", asyncHandler(extensionController.getCustomExtension));
+extensionRouter.patch(
+  "/del",
+  DtoValidatorMiddleware(ExtensionDto),
+  asyncHandler(extensionController.delExtension)
+);
