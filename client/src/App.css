@@ -1,0 +1,32 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: large;
+}
+.desc {
+   text-align:left;
+   margin-top: 20px;
+   margin-left: 80px;
+}
+
+.form{
+  width: 500px;
+  margin-top: 20px;
+  margin-left: 80px;
+}
+.input {
+    margin-top: 20px;
+}
+
+.customInput {
+   margin-top: 20px;
+}
+.App {
+  text-align: center;
+}
+
