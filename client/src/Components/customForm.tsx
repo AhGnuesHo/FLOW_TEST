@@ -23,7 +23,7 @@ export const CustomForm: React.FC = () => {
 
   const deleteExtension = async (extensionId: string, name: string) => {
     try {
-      await axios.post(`${API_BASE_URL}/api/extension/del`, {
+      await axios.patch(`${API_BASE_URL}/api/extension/del`, {
         id: extensionId,
         name,
       });
@@ -58,7 +58,7 @@ export const CustomForm: React.FC = () => {
   };
 
   return (
-    <Form.Item className="input" label="Custom Extension">
+    <Form.Item className="input" label="커스텀 확장자">
       <div style={{ display: "flex" }}>
         <Input
           style={{ marginRight: "10px" }}
@@ -67,7 +67,7 @@ export const CustomForm: React.FC = () => {
           onPressEnter={handleInputKeyPress}
         />
         <Button type="primary" onClick={handleAddExtension}>
-          + Add
+          + 추가
         </Button>
       </div>
 
