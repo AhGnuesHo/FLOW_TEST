@@ -1,24 +1,28 @@
-import { Button, Card, Form, Input, message, Result, Space, Tag } from "antd";
+import { Button, Form, Input, message } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "../config";
 import { Extension } from "../interface";
+import { customFetchData } from "../Services";
+import { CustomCard } from "./customCard";
 
 export const CustomForm: React.FC = () => {
   const [customData, setCustomData] = useState<Extension[]>([]);
   const [newExtension, setNewExtension] = useState<string>("");
   const [messageApi, contextHolder] = message.useMessage();
+  const [dataFetched, setDataFetched] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDataAndSetState = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/extension`);
-        setCustomData(response.data);
+        const data = await customFetchData();
+        setCustomData(data);
+        setDataFetched(true);
       } catch (error) {
         console.error(error);
       }
     };
-    fetchData();
+    fetchDataAndSetState();
   }, [customData]);
 
   const deleteExtension = async (extensionId: string, name: string) => {
@@ -48,6 +52,7 @@ export const CustomForm: React.FC = () => {
         type: "warning",
         content: error?.response?.data?.message,
         className: "custom-class",
+        duration: 1,
         style: {
           marginTop: "20vh",
         },
@@ -64,6 +69,7 @@ export const CustomForm: React.FC = () => {
       handleAddExtension();
     }
   };
+
   const isAddButtonDisabled = newExtension.trim() === "";
   return (
     <Form.Item className="input" label="커스텀 확장자">
@@ -85,23 +91,9 @@ export const CustomForm: React.FC = () => {
         {contextHolder}
       </div>
 
-      <Card className="customInput">
-        {customData.length > 0 ? (
-          <Space size={[0, 8]} wrap>
-            {customData.map((item: Extension) => (
-              <Tag
-                key={item._id}
-                closable
-                onClose={() => deleteExtension(item._id, item.name)}
-              >
-                {item.name}
-              </Tag>
-            ))}
-          </Space>
-        ) : (
-          <Result title="차단하고 싶은 확장자를 추가하세요." />
-        )}
-      </Card>
+      {dataFetched ? (
+        <CustomCard customData={customData} deleteExtension={deleteExtension} />
+      ) : null}
     </Form.Item>
   );
 };

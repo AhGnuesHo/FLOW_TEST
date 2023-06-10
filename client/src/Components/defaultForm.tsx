@@ -1,26 +1,29 @@
-import { Checkbox, Form } from "antd";
+import { Form } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import "../App.css";
 import { API_BASE_URL } from "../config";
 import { Extension } from "../interface";
+import { defaultFetchData } from "../Services";
+import { CheckboxItem } from "./defaultCheckBox";
 
 export const DefaultForm: React.FC = () => {
   const [checkboxData, setCheckboxData] = useState<Extension[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDataAndSetState = async () => {
       try {
-        const response = await axios.get(
-          `${API_BASE_URL}/api/extension/default`
-        );
-        setCheckboxData(response.data);
+        const data = await defaultFetchData();
+        setCheckboxData(data);
+        setLoading(false);
       } catch (error) {
         console.error(error);
+
+        setLoading(false);
       }
     };
-
-    fetchData();
+    fetchDataAndSetState();
   }, []);
 
   const handleCheckbox = async (id: string, checked: boolean) => {
@@ -41,17 +44,20 @@ export const DefaultForm: React.FC = () => {
       console.error(error);
     }
   };
+
   return (
     <Form.Item label="고정 확장자">
-      {checkboxData.map((item: Extension) => (
-        <Checkbox
-          key={item._id}
-          checked={item.available}
-          onChange={(e) => handleCheckbox(item._id, e.target.checked)}
-        >
-          {item.name}
-        </Checkbox>
-      ))}
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        checkboxData.map((item: Extension) => (
+          <CheckboxItem
+            key={item._id}
+            item={item}
+            handleCheckbox={handleCheckbox}
+          />
+        ))
+      )}
     </Form.Item>
   );
 };
