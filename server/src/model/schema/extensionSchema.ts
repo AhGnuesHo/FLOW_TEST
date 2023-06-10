@@ -3,6 +3,7 @@ import mongoose, { ObjectId } from "mongoose";
 export interface IExtension {
   id: ObjectId;
   name: string;
+  count?: number;
 }
 const Schema = mongoose.Schema;
 

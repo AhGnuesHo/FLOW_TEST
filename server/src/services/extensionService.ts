@@ -35,12 +35,19 @@ export class ExtensionService implements IExtensionService {
     return result;
   }
   public async setCustomExtension(extension: string): Promise<IExtension> {
+    if (await this.isExist(extension)) {
+      throw new Error("이미 차단된 확장자입니다.");
+    }
     const [{ id, name }] = await this.extensionModel.create([
       {
         name: extension,
       },
     ]);
-    return { id, name };
+    const count = await this.countExtension();
+    if (count > 200) {
+      throw new Error("확장자는 최대 200개까지 추가가 가능합니다. ");
+    }
+    return { id, name, count };
   }
 
   public async getCustomExtension(): Promise<IExtension[]> {
@@ -48,12 +55,22 @@ export class ExtensionService implements IExtensionService {
   }
 
   public async delExtension(id: ObjectId, name: string): Promise<boolean> {
+    console.log(id, name);
     const { deletedCount } = await this.extensionModel.deleteOne({
       _id: id,
       name,
     });
-
+    console.log(deletedCount);
     return deletedCount === 1;
+  }
+
+  private async isExist(extension: string): Promise<boolean> {
+    const result = await this.extensionModel.findOne({ name: extension });
+    return result !== null;
+  }
+
+  private async countExtension(): Promise<number> {
+    return await this.extensionModel.count({});
   }
 }
 

@@ -41,6 +41,7 @@ export class ExtensionController implements IExtensionController {
     const { id, name } = req.body;
 
     const result = await this.extensionService.delExtension(id, name);
+
     if (!result) {
       throw new Error("확장자 제거에 실패했습니다.");
     }
