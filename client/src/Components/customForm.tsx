@@ -11,7 +11,6 @@ export const CustomForm: React.FC = () => {
   const [newExtension, setNewExtension] = useState<string>("");
   const [messageApi, contextHolder] = message.useMessage();
   const [dataFetched, setDataFetched] = useState(false);
-
   useEffect(() => {
     const fetchDataAndSetState = async () => {
       try {
@@ -22,8 +21,11 @@ export const CustomForm: React.FC = () => {
         console.error(error);
       }
     };
-    fetchDataAndSetState();
-  }, [customData]);
+
+    if (!dataFetched) {
+      fetchDataAndSetState();
+    }
+  }, [dataFetched]);
 
   const deleteExtension = async (extensionId: string, name: string) => {
     try {
